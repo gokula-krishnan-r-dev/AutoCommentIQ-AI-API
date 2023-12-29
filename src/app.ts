@@ -14,13 +14,6 @@ app.use(
     keys: ["key1", "key2"],
   })
 );
-const isLoggedIn = (req, res, next) => {
-  if (req.user) {
-    next();
-  } else {
-    res.sendStatus(401);
-  }
-};
 
 app.use(passport.initialize()); // init passport on every route call
 app.use(passport.session()); //allow passport to use "express-session"
