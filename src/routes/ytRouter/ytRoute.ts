@@ -20,7 +20,7 @@ const createVideoEndpoint = (path: string) => {
 
       const response = await axios.get(apiUrl);
       const data = response.data;
-      res.json({ [path]: data }); // Send response with dynamic key
+      res.json({ data }); // Send response with dynamic key
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch YouTube data" });
     }

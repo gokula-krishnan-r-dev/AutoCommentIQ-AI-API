@@ -15,8 +15,8 @@ passport.deserializeUser(function (user, done) {
 passport.use(
   new GoogleStrategy(
     {
-      clientID: GOOGLE_CLIENT_ID,
-      clientSecret: GOOGLE_CLIENT_SECRET,
+      clientID: GOOGLE_CLIENT_ID!,
+      clientSecret: GOOGLE_CLIENT_SECRET!,
       callbackURL: "http://localhost:3000/auth/google/callback",
       scope: [
         "email",
@@ -25,11 +25,19 @@ passport.use(
         "https://www.googleapis.com/auth/youtube.force-ssl",
       ],
     },
-    async (request, accessToken, refreshToken, profile, done) => {
+    async (
+      accessToken: string,
+      refreshToken: string,
+      profile: any,
+      done: any
+    ) => {
+      console.log(accessToken);
+
       try {
         let user = await User.findOne({ googleId: profile?.id });
 
         if (!user) {
+          // Create a new user if not found
           user = new User({
             googleId: profile.id,
             username: profile.displayName,
@@ -41,14 +49,22 @@ passport.use(
           });
 
           await user.save();
-        }
+        } else {
+          // If the user exists, update all details
+          user.username = profile.displayName;
+          user.email = profile.email;
+          user.accessToken = accessToken;
+          user.refreshToken = refreshToken;
+          user.profile = profile;
+          // Update any other fields as needed
 
+          await user.save();
+        }
         // Generate JWT token
         const token = jwt.sign({ userId: user.id }, JWT_SECRET, {
           expiresIn: "1h",
-        }); // Modify expiry as needed
+        });
 
-        // Update user's token field and save to MongoDB
         user.token = token;
         await user.save();
 

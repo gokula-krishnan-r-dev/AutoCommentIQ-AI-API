@@ -16,7 +16,7 @@ const UserSchema: Schema = new Schema({
   username: { type: String },
   email: { type: String, required: true },
   accessToken: { type: String },
-  // refreshToken: { type: Schema.Types.Mixed },
+  refreshToken: { type: Object },
   profile: { type: Schema.Types.Mixed }, // Adjust as per the profile structure
   token: { type: String, default: null },
 });
